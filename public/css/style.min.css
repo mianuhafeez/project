@@ -4,4 +4,6 @@ input.form-control{
     border-bottom: 1px solid #999 !important;
     padding: 6px 30px !important;
     box-sizing: border-box !important;
+    border-radius: 0 !important;
+    background-color: transparent !important;
 }
