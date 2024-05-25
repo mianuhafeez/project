@@ -6,14 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Providers\RouteServiceProvider;
-use App\Models\User;
 use App\Services\UserService;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Inertia\Response;
+use Inertia\Inertia;
 
 class RegisterController extends Controller
 {
@@ -53,26 +50,17 @@ class RegisterController extends Controller
     /**
      * Show the application registration form.
      *
-     * @return \Illuminate\View\View
+     * @return Response
      */
-    public function showRegistrationForm()
+    public function showRegistrationForm():Response
     {
-        return view('auth.register');
+        return Inertia::render('Auth/Register');
     }
 
-    public function register(RegisterRequest $request): JsonResponse
+    public function register(RegisterRequest $request)
     {
-        try {
             $user = $this->userService->createUser($request);
-            return response()->json([
-                'message' => 'Registration successful!',
-                'user' => UserResource::make($user),
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Registration failed.',
-                'error' => $e->getMessage(),
-            ], 400);
-        }
+            $this->guard()->login($user);
+            return redirect()->route('todo.list');
     }
 }

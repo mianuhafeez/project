@@ -6,7 +6,8 @@ use App\Http\Requests\TaskRequest;
 use App\Http\Resources\TaskResource;
 use App\Services\TaskService;
 use Illuminate\Http\JsonResponse;
-use \Illuminate\View\View;
+use Inertia\Response;
+use Inertia\Inertia;
 
 class TodoListController extends Controller
 {
@@ -20,10 +21,39 @@ class TodoListController extends Controller
     /**
      * Show the tasks.
      *
-     * @return View
+    /**
+     * @return Response
      */
-    public function index():View
+    public function index():Response
     {
-        return view('todo-list.index');
+        $tasks= $this->taskService->getAllTasks();
+        return Inertia::render('Todo/List',
+            [
+                'tasks' =>  TaskResource::collection($tasks)
+            ]);
+    }
+
+    /**
+     * API endpoint to store a new task.
+     *
+     * @param TaskRequest $request
+     * @return JsonResponse
+     */
+    public function store(TaskRequest $request): JsonResponse
+    {
+        try {
+            $taskData = $request->validated();
+            $task = $this->taskService->createTask($taskData);
+
+            return response()->json([
+                'message' => 'Task created successfully!',
+                'task' => TaskResource::make($task),
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Task creation failed.',
+                'error' => $e->getMessage(),
+            ], 400);
+        }
     }
 }

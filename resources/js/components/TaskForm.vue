@@ -1,9 +1,9 @@
 <template>
     <div>
         <form @submit.prevent="submitForm" method="POST" class="register-form" id="task-form">
-            <div class="card">
-                <div class="card-body p-4">
-                    <h2 class="form-title mb-2">Add Todo</h2>
+            <div class="">
+                <div class="p-4">
+                    <h2 class="text-xl font-semibold mb-4">Add Todo</h2>
                     <form-field
                         v-model="form.name"
                         label="Todo Name"
@@ -29,9 +29,11 @@
                     />
                     <VueDatePicker
                         v-model="form.due_date"
-                        class="mb-3"
+                        class="mb-4"
                         placeholder="Enter Due Date"
-                        format="Y-m-d"/>
+                        format="Y-m-d"
+                        wrapper-class="w-full"
+                    />
                     <form-field-textarea
                         v-model="form.description"
                         label="Description"
@@ -39,13 +41,9 @@
                         :error="errors.description"
                         icon="zmdi-comment-text"
                     />
-                    <div class="form-group form-button d-flex justify-content-end">
-                        <button type="submit" name="submit" id="submit" class="btn btn-primary form-button-primary"
-                                style="margin-right: 10px;">Submit
-                        </button>
-                        <button type="button" name="cancel" id="cancel" class="btn btn-outline-secondary"
-                                @click="resetForm">Cancel
-                        </button>
+                    <div class="flex justify-end mt-6">
+                        <button type="submit" name="submit" id="submit" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">Submit</button>
+                        <button type="button" name="cancel" id="cancel" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" @click="resetForm">Cancel</button>
                     </div>
                 </div>
             </div>
@@ -54,13 +52,13 @@
 </template>
 
 <script setup>
-import {ref} from 'vue';
-import axios from 'axios';
+import { ref } from 'vue';
+import { useForm } from  '@inertiajs/vue3'
 import FormField from '@/components/common/FormField.vue';
 import FormFieldSelect from '@/components/common/FormFieldSelect.vue';
 import FormFieldTextarea from '@/components/common/FormFieldTextarea.vue';
 
-const form = ref({
+const form = useForm({
     name: '',
     priority: '',
     team: '',
@@ -69,43 +67,26 @@ const form = ref({
 });
 
 const errors = ref({});
-const successMessage = ref('');
 
 const resetForm = () => {
-    form.value = Object.fromEntries(
-        Object.entries(form.value).map(([key, value]) => [key, ''])
-    );
+    form.reset();
     errors.value = {};
-    successMessage.value = '';
 };
 
-const submitForm = async () => {
-    try {
-        errors.value = {};
-        await axios.post('/api/tasks', form.value);
-        window.location.href = '/';
-        resetForm();
-    } catch (error) {
-        handleApiError(error);
-    }
-};
-
-const handleApiError = (error) => {
-    if (error.response) {
-        if (error.response.status === 422 && error.response.data.errors) {
-            errors.value = error.response.data.errors;
-        } else {
-            console.error('Task creation failed:', error.response.data.message);
+const submitForm = () => {
+    form.post('/tasks', {
+        onSuccess: () => {
+            resetForm();
+            window.location.href = '/';
+        },
+        onError: (error) => {
+            console.log( form.errors);
+            errors.value = form.errors;
         }
-    } else if (error.request) {
-        console.error('No response received from the server.');
-    } else {
-        console.error('Error setting up the request:', error.message);
-    }
+    });
 };
 </script>
 
 <style>
-
 
 </style>

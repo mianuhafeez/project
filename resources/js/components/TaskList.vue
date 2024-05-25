@@ -1,8 +1,8 @@
 <template>
     <div class="table-responsive todo_list">
-        <div class="d-flex justify-content-between mb-3">
-            <div class="d-flex align-items-center">
-                <span class="form-label me-2 mt-2">Filter:</span>
+        <div class="flex justify-between mb-3">
+            <div class="flex items-center">
+                <span class="mr-2 mt-2">Filter:</span>
                 <select v-model="priorityFilter" id="priorityFilter" class="form-select">
                     <option value="">All</option>
                     <option value="HIGH">High</option>
@@ -10,8 +10,8 @@
                     <option value="LOW">Low</option>
                 </select>
             </div>
-            <div class="d-flex align-items-center">
-                <span class="form-label me-2 mt-2">Sort:</span>
+            <div class="flex items-center">
+                <span class="mr-2 mt-2">Sort:</span>
                 <select v-model="sortOrder" id="sortOrder" class="form-select">
                     <option value="asc">Ascending</option>
                     <option value="desc">Descending</option>
@@ -19,37 +19,39 @@
             </div>
         </div>
 
-        <table class="table table-hover table-striped table-vcenter mb-0 text-nowrap">
+        <table class="table-auto w-full border-collapse border border-gray-300">
             <thead>
-            <tr>
-                <th></th>
-                <th class="w150 text-right" @click="sortBy('due_date')">Due</th>
-                <th class="w100" @click="sortBy('priority')">Priority</th>
-                <th class="w80"><i class="zmdi zmdi-account"></i></th>
+            <tr class="bg-gray-200">
+                <th class="text-left">Name</th>
+                <th class="text-right cursor-pointer" @click="sortBy('due_date')">Due</th>
+                <th class="cursor-pointer" @click="sortBy('priority')">Priority</th>
+                <th class="text-left"><i class="zmdi zmdi-account"></i></th>
             </tr>
             </thead>
             <tbody>
             <tr v-for="task in filteredTasks" :key="task.id">
                 <td>
-                    <div class="custom-control custom-checkbox">
-                        <span class="custom-control-label">{{ task.name }}</span>
+                    <div class="flex items-center">
+                        <span class="text-sm font-medium">{{ task.name }}</span>
                     </div>
                 </td>
                 <td class="text-right">{{ task.due_date }}</td>
-                <td>
-                    <span :class="getPriorityClass(task.priority)">{{ task.priority }}</span>
+                <td class="text-center">
+                        <span :class="getPriorityClass(task.priority)" class="py-1 px-2 rounded text-white">
+                            {{ task.priority }}
+                        </span>
                 </td>
-                <td>
-            <span v-if="task.image">
-              <img :src="task.image" data-toggle="tooltip" data-placement="top" :title="task.team" alt="Avatar" class="avatar" :data-original-title="task.avatar">
-            </span>
-                    <span v-else>
-              <span :class="getAvatarClass(task.priority)" data-toggle="tooltip" data-placement="top" :title="task.team" :data-original-title="task.avatar">{{ task.avatar.toUpperCase() }}</span>
-            </span>
+                <td class="w-1/12 text-center">
+                        <span v-if="task.image">
+                            <img :src="task.image" class="h-8 w-8 rounded-full" data-toggle="tooltip" :title="task.team" :alt="task.avatar">
+                        </span>
+                    <span v-else :class="getAvatarClass(task.priority)" class="h-8 w-8 rounded-full flex items-center justify-center bg-pink-500 text-white" data-toggle="tooltip" :title="task.team">
+                            {{ task.avatar.toUpperCase() }}
+                        </span>
                 </td>
             </tr>
             <tr v-if="filteredTasks.length === 0">
-                <td colspan="4">No tasks found.</td>
+                <td colspan="4" class="text-center py-4">No tasks found.</td>
             </tr>
             </tbody>
         </table>
@@ -60,9 +62,14 @@
 import axios from 'axios';
 
 export default {
+    props: {
+        tasks: {
+            type: Array,
+            default: []
+        }
+    },
     data() {
         return {
-            tasks: [],
             priorityFilter: '',
             sortOrder: 'asc',
         };
@@ -84,38 +91,33 @@ export default {
             return filtered;
         },
     },
-    mounted() {
-        this.fetchTasks();
-    },
     methods: {
-        fetchTasks() {
-            axios.get('/api/tasks')
-                .then(response => {
-                    this.tasks = response.data.tasks;
-                })
-                .catch(error => {
-                    console.error('Error fetching tasks:', error);
-                });
-        },
         getPriorityClass(priority) {
             return {
-                'badge bg-success': priority === 'HIGH',
-                'badge bg-info': priority === 'MED',
-                'badge bg-warning': priority === 'LOW',
+                'bg-green-500': priority === 'HIGH',
+                'bg-blue-500': priority === 'MED',
+                'bg-yellow-500': priority === 'LOW',
+                'py-1': true,
+                'px-2': true,
+                'rounded': true,
+                'text-white': true,
             };
         },
         getAvatarClass(priority) {
             return {
-                'avatar avatar-pink': priority === 'HIGH',
-                'avatar avatar-blue': priority !== 'HIGH',
+                'bg-pink-500': priority === 'HIGH',
+                'bg-blue-500': priority !== 'HIGH',
+                'h-8': true,
+                'w-8': true,
+                'rounded-full': true,
+                'flex': true,
+                'items-center': true,
+                'justify-center': true,
+                'text-white': true,
             };
         },
         sortBy(field) {
-            if (this.sortOrder === 'asc') {
-                this.sortOrder = 'desc';
-            } else {
-                this.sortOrder = 'asc';
-            }
+            this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
         },
     },
 };

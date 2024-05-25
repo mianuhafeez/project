@@ -2,13 +2,13 @@
     <div class="form-group">
         <div class="input-container">
             <label :for="name"><i :class="iconClass"></i></label>
-            <select :name="name" :id="name" class="form-control show-tick todo-input"
+            <select :name="name" :id="name" class="form-control show-tick todo-input w-full"
                     :value="modelValue" @change="handleInput($event, $emit)">
                 <option value="" disabled> {{ label }}</option>
                 <option v-for="(option, index) in options" :key="index" :value="option">{{ option }}</option>
             </select>
         </div>
-        <div v-if="error.length > 0" class="error">{{ error[0] }}</div>
+        <div v-if="error.length > 0" class="error">{{ error }}</div>
     </div>
 </template>
 

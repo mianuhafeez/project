@@ -3,7 +3,7 @@
         <div class="input-container">
             <label :for="name"><i :class="iconClass"></i></label>
             <input
-                class="todo-input form-control"
+                class="todo-input form-control w-full"
                 :type="type"
                 :name="name"
                 :id="name"
@@ -13,7 +13,7 @@
                 :placeholder="label"
             />
         </div>
-        <div v-if="error.length > 0" class="error">{{ error[0] }}</div>
+        <div v-if="error.length > 0" class="error">{{ error }}</div>
     </div>
 </template>
 

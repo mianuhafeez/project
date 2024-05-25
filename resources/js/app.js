@@ -1,30 +1,15 @@
-import 'bootstrap';
-import { createApp } from 'vue';
-
-import RegisterForm from './components/RegisterForm.vue';
-import LoginForm from './components/LoginForm.vue';
-import  TasksList from './components/TaskList.vue';
-import  TaskForm from './components/TaskForm.vue';
-import axios from "axios";
-import VueDatePicker from '@vuepic/vue-datepicker';
-
-if (localStorage.getItem('token')) {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-}
-axios.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        if (error.response?.status === 401) {
-            localStorage.removeItem('token');
-            axios.defaults.headers.common['Authorization'] = 'Bearer';
-        }
-        return Promise.reject(error);
-    }
-);
-createApp({})
-    .component('LoginForm', LoginForm)
-    .component('RegisterForm', RegisterForm)
-    .component('TasksList', TasksList)
-    .component('TaskForm', TaskForm)
-    .component('VueDatePicker', VueDatePicker)
-    .mount('#app')
+import { createApp, h } from 'vue'
+import { createInertiaApp } from '@inertiajs/vue3'
+ import VueDatePicker from '@vuepic/vue-datepicker';
+createInertiaApp({
+    resolve: name => {
+        const pages = import.meta.glob('./Pages/**/*.vue', { eager: true })
+        return pages[`./Pages/${name}.vue`]
+    },
+    setup({ el, App, props, plugin }) {
+        createApp({ render: () => h(App, props) })
+            .use(plugin)
+            .component('VueDatePicker', VueDatePicker)
+            .mount(el)
+    },
+})

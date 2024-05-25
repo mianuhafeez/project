@@ -13,7 +13,7 @@
                 <slot/>
             </label>
         </div>
-        <div v-if="error.length > 0" class="error">{{ error[0] }}</div>
+        <div v-if="error.length > 0" class="error">{{ error }}</div>
     </div>
 </template>
 
@@ -33,3 +33,9 @@ defineProps({
     },
 });
 </script>
+
+<style>
+input#agree-term {
+    display: none !important;
+}
+</style>

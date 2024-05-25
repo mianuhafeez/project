@@ -1,5 +1,5 @@
-<!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<!DOCTYPE html>
+<html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,10 +16,12 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
-    <link rel="stylesheet" href="{{asset('css/main.css')}}"/>
+    <link rel="stylesheet" href="{{asset('css/main.css?ver=1')}}"/>
+    @inertiaHead
 </head>
+<body>
 <body class="font-montserrat">
-<div id="app">
+<div>
     <div id="header_top" class="header_top">
         <div class="container">
             <div class="hleft">
@@ -53,20 +55,6 @@
 
                                 <div class="" id="navbarSupportedContent">
                                     <ul class="navbar-nav ms-auto">
-                                        @guest
-                                            @if (Route::has('login'))
-                                                <li class="nav-item">
-                                                    <a class="nav-link"
-                                                       href="{{ route('login') }}">{{ __('Login') }}</a>
-                                                </li>
-                                            @endif
-                                            @if (Route::has('register'))
-                                                <li class="nav-item">
-                                                    <a class="nav-link"
-                                                       href="{{ route('register') }}">{{ __('Register') }}</a>
-                                                </li>
-                                            @endif
-                                        @else
                                             <li class="nav-item dropdown">
                                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#"
                                                    role="button" data-bs-toggle="dropdown" aria-haspopup="true"
@@ -86,7 +74,6 @@
                                                     </form>
                                                 </div>
                                             </li>
-                                        @endguest
                                     </ul>
                                 </div>
                             </div>
@@ -95,10 +82,11 @@
                 </div>
             </div>
         </div>
-    <main>
-        @yield('content')
-    </main>
+        <main>
+            @inertia
+        </main>
+    </div>
 </div>
-</div>
+</body>
 </body>
 </html>

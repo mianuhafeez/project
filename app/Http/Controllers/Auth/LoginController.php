@@ -6,8 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Http\JsonResponse;
+use Inertia\Response;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class LoginController extends Controller
 {
@@ -54,12 +55,18 @@ class LoginController extends Controller
         $this->clearLoginAttempts($request);
 
 
-        $user = User::where('email', $request->email)->first();
+        User::where('email', $request->email)->first();
 
-        return response()->json([
-            'status' => true,
-            'message' => 'User Logged In Successfully',
-            'token' => $user->createToken("API TOKEN")->plainTextToken
-        ], 200);
+        return redirect()->route('todo.list');
+    }
+
+    /**
+     * Show the application's login form.
+     *
+     * @return Response
+     */
+    public function showLoginForm():Response
+    {
+        return Inertia::render('Auth/Login');
     }
 }

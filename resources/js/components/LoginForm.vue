@@ -12,54 +12,37 @@
 </template>
 <script>
 import {ref} from 'vue';
-import axios from 'axios';
 import FormField from '@/components/common/FormField.vue';
+import { useForm } from  '@inertiajs/vue3'
 
 export default {
     components: {
         FormField,
     },
     setup() {
-        const form = ref({
+        const form = useForm({
             email: '',
             password: '',
         });
 
+        const resetForm = () => {
+            form.reset();
+            errors.value = {};
+        };
+
         const errors = ref({});
         const errorMessage = ref('');
 
-        const submitForm = async () => {
-            try {
-                errorMessage.value = '';
-                errors.value = {};
-                const response = await axios.post('/login', form.value);
-                if (response.status === 200) {
-                    localStorage.setItem('token', response.data.token);
+        const submitForm = () => {
+            form.post('/login', {
+                onSuccess: () => {
+                    resetForm();
                     window.location.href = '/';
-                } else {
-                    // Unexpected response status
-                    console.error('Unexpected response status:', response.status);
+                },
+                onError: (error) => {
+                    errors.value = form.errors;
                 }
-            } catch (error) {
-                handleApiError(error);
-            }
-        };
-
-        const handleApiError = (error) => {
-            if (error.response) {
-                if (error.response.status === 422 && error.response.data.errors) {
-                    errors.value = error.response.data.errors;
-                } else {
-                    console.error('Login failed:', error.response.data.message);
-                    errorMessage.value = 'Invalid credentials';
-                }
-            } else if (error.request) {
-                // The request was made, but no response was received
-                console.error('No response received from the server.');
-            } else {
-                // Something happened in setting up the request that triggered an Error
-                console.error('Error setting up the request:', error.message);
-            }
+            });
         };
         return {form, errors, errorMessage, submitForm};
     },

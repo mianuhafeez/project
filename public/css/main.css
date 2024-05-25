@@ -678,3 +678,43 @@ body,h2,input {
     color: black !important;
     margin-left: -15px !important;
 }
+
+
+
+/* Dropdown styles */
+.dropdown {
+    position: relative !important;
+}
+
+/* Dropdown toggle styles */
+.dropdown-toggle {
+    cursor: pointer !important;
+}
+
+/* Dropdown menu styles */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    right: 0; /* Align dropdown menu to the right */
+}
+
+/* Dropdown menu link styles */
+.dropdown-menu a {
+    display: block;
+    padding: 10px 20px;
+    color: #333;
+    text-decoration: none;
+}
+
+/* Hover effect for dropdown menu links */
+.dropdown-menu a:hover {
+    background-color: #f0f0f0;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block
+}
+
